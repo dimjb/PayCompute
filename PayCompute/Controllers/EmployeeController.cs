@@ -152,15 +152,19 @@ namespace PayCompute.Controllers
                 employee.City = model.City;
                 employee.Postcode = model.Postcode;
                 if (model.ImageUrl != null && model.ImageUrl.Length > 0)
+
                 {
-                    if (System.IO.File.Exists(Path.GetFullPath(employee.ImageUrl)))
+                    var webRootPath = _hostingEnvironment.WebRootPath;
+
+                    var imgToDelPath = Path.GetFullPath(webRootPath + employee.ImageUrl);
+
+                    if (System.IO.File.Exists(imgToDelPath))
                     {
-                        System.IO.File.Delete(Path.GetFullPath(employee.ImageUrl));
+                        System.IO.File.Delete(imgToDelPath);
                     }
                     var uploadDir = @"images/employee";
                     var fileName = Path.GetFileNameWithoutExtension(model.ImageUrl.FileName);
                     var extension = Path.GetExtension(model.ImageUrl.FileName);
-                    var webRootPath = _hostingEnvironment.WebRootPath;
                     fileName = DateTime.UtcNow.ToString("yymmssfff") + fileName + extension;
                     var path = Path.Combine(webRootPath, uploadDir, fileName);
                     await model.ImageUrl.CopyToAsync(new FileStream(path, FileMode.Create));
@@ -172,7 +176,7 @@ namespace PayCompute.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Detail(int id)
+        public async Task<IActionResult> Details(int id)
         {
             var employee = await _employeeService.GetById(id);
             if (employee == null)
@@ -224,9 +228,13 @@ namespace PayCompute.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(EmployeeDeleteViewModel model)
         {
-            if (System.IO.File.Exists(Path.GetFullPath(model.ImageUrl)))
+            var webRootPath = _hostingEnvironment.WebRootPath;
+
+            var imgToDelPath = Path.GetFullPath(webRootPath + model.ImageUrl);
+
+            if (System.IO.File.Exists(imgToDelPath))
             {
-                System.IO.File.Delete(Path.GetFullPath(model.ImageUrl));
+                System.IO.File.Delete(imgToDelPath);
             }
             await _employeeService.Delete(model.Id);
             return RedirectToAction(nameof(Index));
