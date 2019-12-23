@@ -38,7 +38,7 @@ namespace PayCompute.Services.Implementation
 
         public async Task<IEnumerable<Employee>> GetAll()
         {
-            return await _context.Employees.ToListAsync();
+            return await _context.Employees.AsNoTracking().ToListAsync();
         }
 
         public async Task UpdateAsync(Employee employee)

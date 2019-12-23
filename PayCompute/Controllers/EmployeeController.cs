@@ -22,10 +22,10 @@ namespace PayCompute.Controllers
             _hostingEnvironment = hostingEnvironment;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber)
         {
             var employees = await _employeeService.GetAll();
-            var employeesToView = employees.Select(employee => new EmployeeIndexViewModel
+            var employeesToView = employees.OrderBy(emp => emp.FullName).Select(employee => new EmployeeIndexViewModel
             {
                 Id = employee.Id,
                 EmployeeNo = employee.EmployeeNo,
@@ -35,8 +35,10 @@ namespace PayCompute.Controllers
                 Designation = employee.Designation,
                 City = employee.City,
                 DateJoined = employee.DateJoined
-            });
-            return View(employeesToView);
+            }).ToList();
+            int pageSize = 4;
+            return View(EmployeeListPagination<EmployeeIndexViewModel>.Create(employeesToView, pageNumber ?? 1, pageSize));
+
         }
 
         public IActionResult Create()
