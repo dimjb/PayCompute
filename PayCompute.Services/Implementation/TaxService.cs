@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PayCompute.Services.Implementation
 {
-    class TaxService : ITaxService
+    public class TaxService : ITaxService
     {
         private decimal taxRate;
         private decimal tax;
