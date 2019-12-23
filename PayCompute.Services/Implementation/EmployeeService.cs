@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using PayCompute.Entity;
 using PayCompute.Persistence;
 using System;
@@ -11,6 +12,7 @@ namespace PayCompute.Services.Implementation
     public class EmployeeService : IEmployeeService
     {
         private readonly ApplicationDbContext _context;
+        private decimal studentLoanAmount;
 
         public EmployeeService(ApplicationDbContext ctx)
         {
@@ -53,15 +55,52 @@ namespace PayCompute.Services.Implementation
         }
 
 
-        public decimal StudentLoanRepaymentAmount(int employeeId, decimal totalAmount)
+        public async Task<decimal> StudentLoanRepaymentAmount(int employeeId, decimal totalAmount)
         {
-            throw new NotImplementedException();
+            var employee = await GetById(employeeId);
+            if (employee.StudentLoan == StudentLoan.Yes && totalAmount > 1750 && totalAmount < 2000)
+            {
+                studentLoanAmount = 15m;
+            }
+            else if (employee.StudentLoan == StudentLoan.Yes && totalAmount >= 2000 && totalAmount < 2250)
+            {
+                studentLoanAmount = 38m;
+            }
+            else if (employee.StudentLoan == StudentLoan.Yes && totalAmount >= 2250 && totalAmount < 2500)
+            {
+                studentLoanAmount = 60m;
+            }
+            else if (employee.StudentLoan == StudentLoan.Yes && totalAmount >= 2500)
+            {
+                studentLoanAmount = 83m;
+            }
+            else
+            {
+                studentLoanAmount = 0m;
+            }
+            return studentLoanAmount;
         }
 
-        public decimal UnionFees(int employeeId)
+        public async Task<decimal> UnionFees(int employeeId)
         {
-            throw new NotImplementedException();
+            var employee = await GetById(employeeId);
+            var fee = employee.UnionMember == UnionMember.Yes ? 10m : 0m;
+            return fee;
         }
 
+        public async Task<IEnumerable<SelectListItem>> GetAllEmployeesForPayroll()
+        {
+            var employees = await GetAll();
+            var employeesSelectList = new List<SelectListItem>();
+            foreach (var emp in employees)
+            {
+                employeesSelectList.Add(new SelectListItem
+                {
+                    Text = emp.FullName,
+                    Value = emp.Id.ToString()
+                });
+            }
+            return employeesSelectList;
+        }
     }
 }

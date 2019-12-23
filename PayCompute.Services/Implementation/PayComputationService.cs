@@ -89,5 +89,11 @@ namespace PayCompute.Services.Implementation
 
         public decimal TotalEarnings(decimal overtimeEarnings, decimal contractualEarnings)
         => overtimeEarnings + contractualEarnings;
+
+        public async Task<TaxYear> GetTaxYearById(int id)
+        {
+            return await _context.TaxYears.FindAsync(id);
     }
+    }
+   
 }

@@ -1,4 +1,5 @@
-﻿using PayCompute.Entity;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using PayCompute.Entity;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,8 +14,9 @@ namespace PayCompute.Services
         Task UpdateAsync(Employee employee);
         Task UpdateAsync(int employeeId);
         Task Delete(int employeeId);
-        decimal UnionFees(int employeeId);
-        decimal StudentLoanRepaymentAmount(int employeeId, decimal totalAmount);
+        Task<decimal> UnionFees(int employeeId);
+        Task<decimal> StudentLoanRepaymentAmount(int employeeId, decimal totalAmount);
         Task<IEnumerable<Employee>> GetAll();
+        Task<IEnumerable<SelectListItem>> GetAllEmployeesForPayroll();
     }
 }
